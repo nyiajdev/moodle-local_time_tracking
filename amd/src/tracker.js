@@ -13,10 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(['jquery', 'local_time_tracking/timer', 'core/ajax', 'core/log'], function($, Timer, Ajax, Log) {
+define(['jquery', 'local_time_tracking/timer', 'local_time_tracking/inactivity_timer', 'core/ajax', 'core/log'], function($, Timer, InactivityTimer, Ajax, Log) {
 
     let Tracker = function(sessionId) {
         this.timer = null;
+        this.inactivityTimer = null;
         this.sessionId = sessionId;
     };
 
@@ -53,6 +54,24 @@ define(['jquery', 'local_time_tracking/timer', 'core/ajax', 'core/log'], functio
                 Log.debug('TRACKER: Add elapsed time ' + interval);
                 this.addElapsedTime(interval);
             }
+        });
+
+        this.inactivityTimer = new InactivityTimer(5000, 15, 5);
+        this.inactivityTimer.init();
+
+        // When user goes inactive, stop tracking time.
+        $(this.inactivityTimer).on('inactive', () => {
+            this.timer.pause();
+        });
+
+        // When a user becomes active, continue tracking time.
+        $(this.inactivityTimer).on('active', () => {
+            this.timer.start();
+        });
+
+        // If user is inactive for too long log them out.
+        $(this.inactivityTimer).on('session_timeout', () => {
+            this.inactivityTimer.logout();
         });
     };
 

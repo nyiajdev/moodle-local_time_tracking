@@ -52,12 +52,14 @@ class external extends \external_api
 
     public static function add_elapsed_time($sessionid, $elapsedtime)
     {
-        global $DB, $USER;
+        global $USER;
 
         $params = self::validate_parameters(self::add_elapsed_time_parameters(), [
             'sessionid' => $sessionid,
             'elapsedtime' => $elapsedtime
         ]);
+
+        require_login();
 
         $session = new session($sessionid);
 
