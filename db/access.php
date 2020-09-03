@@ -32,5 +32,16 @@ $capabilities = [
         'archetypes'   => [
             'manager' => CAP_ALLOW
         ]
+    ],
+    'local/time_tracking:trackactivity' => [
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes'   => [
+            'guest' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ]
     ]
 ];

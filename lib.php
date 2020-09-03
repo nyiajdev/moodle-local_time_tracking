@@ -9,8 +9,10 @@ function local_time_tracking_extend_navigation(global_navigation $nav) {
 
     try {
         if (get_config('local_time_tracking', 'trackerenabled') && $PAGE->context) {
-            $tracker = new \local_time_tracking\local\tracker($PAGE->context, $USER->id);
-            $tracker->start_session();
+            if (has_capability('local/time_tracking:trackactivity', $PAGE->context)) {
+                $tracker = new \local_time_tracking\local\tracker($PAGE->context, $USER->id);
+                $tracker->start_session();
+            }
         }
     } catch (moodle_exception $e) {
         // Catch any exceptions to prevent page from breaking for users.
@@ -51,4 +53,14 @@ function local_time_tracking_format_date(int $timestamp) {
     }
 
     return userdate($timestamp, get_string($format, $component));
+}
+
+/**
+ * Format seconds as time.
+ *
+ * @param int $seconds
+ * @return string
+ */
+function local_time_tracking_format_elapsed_time(int $seconds): string {
+    return sprintf('%02d:%02d:%02d', ($seconds/3600),($seconds/60%60), $seconds%60);
 }

@@ -52,7 +52,7 @@ class course_report extends table_sql {
 
         if ($download) {
             raise_memory_limit(MEMORY_EXTRA);
-            $this->is_downloading($download, 'time-tracking-report');
+            $this->is_downloading($download, 'time-tracking-report-' . $courseid);
         }
 
         // Define the headers and columns.
@@ -121,13 +121,11 @@ class course_report extends table_sql {
     }
 
     public function col_elapsedtime($row) {
-        $t = $row->elapsedtime;
-
-        if (!$t && !$this->is_downloading()) {
+        if (!$row->elapsedtime && !$this->is_downloading()) {
             return '<span class="text-muted"><i>' . get_string('notimetrackedyet', 'local_time_tracking') . '</i></span>';
         }
 
-        return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
+        return local_time_tracking_format_elapsed_time($row->elapsedtime);
     }
 
     public function col_firstaccess($row) {
@@ -143,11 +141,19 @@ class course_report extends table_sql {
     }
 
     public function col_modulecount($row) {
+        $content = '';
         if ($row->modulecount > 0) {
-            return get_string('activitymodulecount', 'local_time_tracking', ['count' => $row->modulecount]);
+            $content = get_string('activitymodulecount', 'local_time_tracking', ['count' => $row->modulecount]);
         }
 
+        if (!$this->is_downloading()) {
+            $content = \html_writer::link(new \moodle_url('/local/time_tracking/modulereport.php', [
+                'courseid' => $this->courseid,
+                'userid' => $row->userid
+            ]), $content);
+        }
 
+        return $content;
     }
 
     /**
