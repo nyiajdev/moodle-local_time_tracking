@@ -40,6 +40,8 @@ require_once($CFG->libdir . '/tablelib.php');
  * Display enrolled user sessions.
  *
  * @package local_time_tracking
+ * @copyright  2020 NYIAJ LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_report extends table_sql {
 

@@ -30,6 +30,8 @@ defined('MOODLE_INTERNAL') || die();
  * Provides settings to time tracking.
  *
  * @package local_time_tracking
+ * @copyright  2020 NYIAJ LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base_settings_provider {
 

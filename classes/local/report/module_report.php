@@ -42,6 +42,8 @@ require_once($CFG->libdir . '/tablelib.php');
  * Display module sessions within a course for a single user.
  *
  * @package local_time_tracking
+ * @copyright  2020 NYIAJ LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class module_report extends table_sql {
 
