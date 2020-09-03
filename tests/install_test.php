@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Ensure default settings are set on installation.
+ *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,12 +27,19 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 /**
- * Install tests.
+ * Ensure default settings are set on installation.
  *
  * @group time_tracking
+ * @copyright  2020 NYIAJ LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_time_tracking_install_test extends advanced_testcase {
 
+    /**
+     * Ensure default settings are set on installation.
+     *
+     * @throws dml_exception
+     */
     public function test_installation() {
         $this->assertEquals(1, get_config('local_time_tracking', 'trackerenabled'));
         $this->assertEquals(10, get_config('local_time_tracking', 'interval'));

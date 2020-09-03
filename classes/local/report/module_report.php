@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Display module sessions within a course for a single user.
+ *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,12 +30,19 @@ use context_course;
 use dml_exception;
 use html_writer;
 use local_time_tracking\persistent\session;
+use moodle_exception;
+use stdClass;
 use table_sql;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
 
+/**
+ * Display module sessions within a course for a single user.
+ *
+ * @package local_time_tracking
+ */
 class module_report extends table_sql {
 
     /**
@@ -54,9 +63,10 @@ class module_report extends table_sql {
     /**
      * Build a new course report.
      *
+     * @param int $userid
      * @param int $courseid
      * @param bool $download
-     * @throws coding_exception
+     * @throws moodle_exception
      */
     public function __construct(int $userid, int $courseid, bool $download) {
         parent::__construct($userid);
@@ -99,6 +109,12 @@ class module_report extends table_sql {
         ]);
     }
 
+    /**
+     * Get activity module name.
+     *
+     * @param stdClass $row
+     * @return string
+     */
     public function col_activitymodule($row) {
         $content = '';
         if (isset($this->cms[$row->cmid])) {
@@ -109,6 +125,13 @@ class module_report extends table_sql {
         return $content;
     }
 
+    /**
+     * Get total elapsed time for module.
+     *
+     * @param stdClass $row
+     * @return string
+     * @throws coding_exception
+     */
     public function col_totalelapsedtime($row) {
         $t = $row->elapsedtime;
 
@@ -119,25 +142,54 @@ class module_report extends table_sql {
         return sprintf('%02d:%02d:%02d', ($t / 3600), ($t / 60 % 60), $t % 60);
     }
 
+    /**
+     * Get user first time access to activity module.
+     *
+     * @param stdClass $row
+     * @return string
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function col_firstaccess($row) {
         if ($row->firstaccess > 0) {
             return local_time_tracking_format_date($row->firstaccess);
         }
+        return '';
     }
 
+    /**
+     * Get user last time access to activity module.
+     *
+     * @param stdClass $row
+     * @return string
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function col_lastaccess($row) {
         if ($row->lastaccess > 0) {
             return local_time_tracking_format_date($row->lastaccess);
         }
+        return '';
     }
 
+    /**
+     * Get when each session was started.
+     *
+     * @param stdClass $row
+     * @return string
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function col_timecreated($row) {
         if ($row->firstaccess > 0) {
             return local_time_tracking_format_date($row->firstaccess);
         }
+        return '';
     }
 
     /**
+     * Query database.
+     *
      * @param int $pagesize
      * @param bool $useinitialsbar
      * @throws dml_exception
@@ -192,8 +244,13 @@ class module_report extends table_sql {
     }
 
     /**
-     * Convenience method to call a number of methods for you to display the
-     * table.
+     * Convenience method to call a number of methods for you to display the table.
+     *
+     * @param int $pagesize
+     * @param bool $useinitialsbar
+     * @param string $downloadhelpbutton
+     * @throws coding_exception
+     * @throws dml_exception
      */
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
         global $DB, $OUTPUT;

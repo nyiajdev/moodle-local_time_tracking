@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Track user session with JS.
+ *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,13 +24,21 @@
 
 namespace local_time_tracking\local;
 
+use coding_exception;
 use context;
+use core\invalid_persistent_exception;
+use dml_exception;
 use local_time_tracking\local_time_tracking\settings_provider\base_settings_provider;
 use local_time_tracking\local_time_tracking\settings_provider\settings_provider;
 use local_time_tracking\persistent\session;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Track user session with JS.
+ *
+ * @package local_time_tracking
+ */
 class tracker {
 
     /**
@@ -42,6 +52,8 @@ class tracker {
     private $userid;
 
     /**
+     * Build a new tracker.
+     *
      * @param context $context
      * @param int $userid
      */
@@ -50,6 +62,13 @@ class tracker {
         $this->userid = $userid;
     }
 
+    /**
+     * Start a new user session.
+     *
+     * @throws coding_exception
+     * @throws invalid_persistent_exception
+     * @throws dml_exception
+     */
     public function start_session() {
         global $PAGE;
 
@@ -67,6 +86,12 @@ class tracker {
         ]);
     }
 
+    /**
+     * Get time tracking settings from provider.
+     *
+     * @return settings_provider
+     * @throws dml_exception
+     */
     public static function get_settings_provider():  settings_provider {
         if ($class = get_config('local_time_tracking', 'settingsprovider')) {
             return new $class();

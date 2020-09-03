@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Time tracking web services
+ * Time tracking web services.
  *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
@@ -24,16 +24,26 @@
 
 namespace local_time_tracking;
 
+use coding_exception;
+use core\invalid_persistent_exception;
+use external_api;
 use external_description;
 use external_function_parameters;
+use invalid_parameter_exception;
 use local_time_tracking\persistent\session;
 use moodle_exception;
+use require_login_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 
-class external extends \external_api
+/**
+ * Time tracking web services.
+ *
+ * @package local_time_tracking
+ */
+class external extends external_api
 {
     /**
      * Returns description of track_module_time() parameters.
@@ -47,6 +57,18 @@ class external extends \external_api
         ]);
     }
 
+    /**
+     * Add time to session.
+     *
+     * @param int $sessionid
+     * @param int $elapsedtime
+     * @return null
+     * @throws coding_exception
+     * @throws invalid_persistent_exception
+     * @throws invalid_parameter_exception
+     * @throws require_login_exception
+     * @throws moodle_exception
+     */
     public static function add_elapsed_time($sessionid, $elapsedtime) {
         global $USER;
 

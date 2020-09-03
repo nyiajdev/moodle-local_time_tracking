@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Configure time tracking sessions.
+ *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -22,15 +24,17 @@
 
 namespace local_time_tracking\form;
 
+use coding_exception;
 use local_time_tracking\local\tracker;
 use local_time_tracking\local_time_tracking\settings_provider\settings_provider;
+use MoodleQuickForm;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
 
 /**
- * Course copy form class.
+ * Configure time tracking sessions.
  *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
@@ -90,6 +94,15 @@ class configure_form extends \moodleform {
         $this->add_action_buttons();
     }
 
+    /**
+     * Add input group.
+     *
+     * @param MoodleQuickForm $mform
+     * @param string $name
+     * @param mixed $defaultvalue
+     * @param string $secondarylabel
+     * @throws coding_exception
+     */
     private function input_group($mform, $name, $defaultvalue, $secondarylabel = 'seconds') {
         $group = [];
         $group[] = $mform->createElement('text', $name, get_string($name, 'local_time_tracking'), ['size' => 4]);

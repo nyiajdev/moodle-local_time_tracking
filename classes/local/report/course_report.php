@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Display enrolled user sessions.
+ *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,13 +26,21 @@ namespace local_time_tracking\local\report;
 
 use coding_exception;
 use context_course;
+use dml_exception;
 use local_time_tracking\persistent\session;
+use moodle_exception;
+use stdClass;
 use table_sql;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
 
+/**
+ * Display enrolled user sessions.
+ *
+ * @package local_time_tracking
+ */
 class course_report extends table_sql {
 
     /**
@@ -113,6 +123,13 @@ class course_report extends table_sql {
         return \html_writer::link($profileurl, $name);
     }
 
+    /**
+     * Get total elapsed time in course.
+     *
+     * @param stdClass $row
+     * @return string
+     * @throws coding_exception
+     */
     public function col_elapsedtime($row) {
         if (!$row->elapsedtime && !$this->is_downloading()) {
             return '<span class="text-muted"><i>' . get_string('notimetrackedyet', 'local_time_tracking') . '</i></span>';
@@ -121,6 +138,14 @@ class course_report extends table_sql {
         return local_time_tracking_format_elapsed_time($row->elapsedtime);
     }
 
+    /**
+     * Get first access to any context within course.
+     *
+     * @param stdClass $row
+     * @return string
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function col_firstaccess($row) {
         if ($row->firstaccess > 0) {
             return local_time_tracking_format_date($row->firstaccess);
@@ -128,6 +153,14 @@ class course_report extends table_sql {
         return '';
     }
 
+    /**
+     * Get last access to any context within course.
+     *
+     * @param stdClass $row
+     * @return string
+     * @throws dml_exception
+     * @throws coding_exception
+     */
     public function col_lastaccess($row) {
         if ($row->lastaccess > 0) {
             return local_time_tracking_format_date($row->lastaccess);
@@ -135,6 +168,14 @@ class course_report extends table_sql {
         return '';
     }
 
+    /**
+     * Get number of modules that have sessions for user.
+     *
+     * @param stdClass $row
+     * @return string
+     * @throws moodle_exception
+     * @throws coding_exception
+     */
     public function col_modulecount($row) {
         $content = '';
         if ($row->modulecount > 0) {
@@ -152,9 +193,11 @@ class course_report extends table_sql {
     }
 
     /**
+     * Query database.
+     *
      * @param int $pagesize
      * @param bool $useinitialsbar
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function query_db($pagesize, $useinitialsbar = true) {
         global $DB;

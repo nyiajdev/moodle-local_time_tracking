@@ -15,11 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Test web services.
+ *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\invalid_persistent_exception;
 use local_time_tracking\external;
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,15 +32,27 @@ global $CFG;
 require_once("$CFG->dirroot/webservice/tests/helpers.php");
 
 /**
- * Class external_test
+ * Test web services.
  *
  * @group time_tracking
+ * @copyright  2020 NYIAJ LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_time_tracking_external_test extends externallib_advanced_testcase {
 
+    /**
+     * @var stdClass
+     */
     private $course;
+
+    /**
+     * @var stdClass
+     */
     private $user;
 
+    /**
+     * Create required objects.
+     */
     public function setUp() {
         $this->course = $this->getDataGenerator()->create_course();
         $this->user = $this->getDataGenerator()->create_user();
@@ -46,11 +61,23 @@ class local_time_tracking_external_test extends externallib_advanced_testcase {
         parent::setUp();
     }
 
+    /**
+     * Delete objects.
+     */
     public function tearDown() {
         $this->course = null;
         $this->user = null;
     }
 
+    /**
+     * Test adding elapsed time.
+     *
+     * @throws invalid_persistent_exception
+     * @throws coding_exception
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @throws require_login_exception
+     */
     public function test_add_elapsed_time() {
         $this->resetAfterTest();
 

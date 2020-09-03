@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Time tracking plugin upgrade code
+ * Individual user page sessions.
  *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
@@ -32,8 +32,17 @@ use dml_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Individual user page sessions.
+ *
+ * @package local_time_tracking
+ */
 class session extends persistent {
-    const TABLE = 'time_tracking_session';
+
+    /**
+     * Persistent table.
+     */
+    const TABLE = 'local_time_tracking_session';
 
     /**
      * Return the definition of the properties of this model.

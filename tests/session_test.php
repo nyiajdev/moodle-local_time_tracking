@@ -15,25 +15,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Test time tracking sessions.
+ *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use core\invalid_persistent_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 /**
- * Class session tests.
+ * Test time tracking sessions.
  *
  * @group time_tracking
+ * @copyright  2020 NYIAJ LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_time_tracking_session_test extends advanced_testcase {
 
+    /**
+     * @var stdClass
+     */
     private $course;
+
+    /**
+     * @var stdClass
+     */
     private $user;
 
+    /**
+     * Create required objects.
+     */
     public function setUp() {
         $this->course = $this->getDataGenerator()->create_course();
         $this->user = $this->getDataGenerator()->create_user();
@@ -42,11 +58,21 @@ class local_time_tracking_session_test extends advanced_testcase {
         parent::setUp();
     }
 
+    /**
+     * Delete objects.
+     */
     public function tearDown() {
         $this->course = null;
         $this->user = null;
     }
 
+    /**
+     * Test tracking session elapsed time.
+     *
+     * @throws invalid_persistent_exception
+     * @throws coding_exception
+     * @throws dml_exception
+     */
     public function test_add_elapsed_time() {
         $this->resetAfterTest();
 
