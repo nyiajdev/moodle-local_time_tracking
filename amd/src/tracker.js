@@ -13,7 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(['jquery', 'local_time_tracking/timer', 'local_time_tracking/inactivity_timer', 'core/ajax', 'core/log'], function($, Timer, InactivityTimer, Ajax, Log) {
+define(['jquery', 'local_time_tracking/timer', 'local_time_tracking/inactivity_timer', 'core/ajax', 'core/log'],
+    function($, Timer, InactivityTimer, Ajax, Log) {
 
     let Tracker = function(sessionId) {
         this.timer = null;

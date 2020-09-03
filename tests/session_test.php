@@ -34,8 +34,7 @@ class local_time_tracking_session_test extends advanced_testcase {
     private $course;
     private $user;
 
-    public function setUp()
-    {
+    public function setUp() {
         $this->course = $this->getDataGenerator()->create_course();
         $this->user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($this->user->id, $this->course->id);
@@ -43,8 +42,7 @@ class local_time_tracking_session_test extends advanced_testcase {
         parent::setUp();
     }
 
-    public function tearDown()
-    {
+    public function tearDown() {
         $this->course = null;
         $this->user = null;
     }

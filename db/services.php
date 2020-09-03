@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $functions = [
     'local_time_tracking_add_elapsed_time' => array(
         'classname'    => 'local_time_tracking\external',

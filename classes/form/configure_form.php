@@ -41,8 +41,7 @@ class configure_form extends \moodleform {
     /**
      * Form definition.
      */
-    protected function definition()
-    {
+    protected function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'generalsettings', get_string('generalsettings', 'local_time_tracking'));

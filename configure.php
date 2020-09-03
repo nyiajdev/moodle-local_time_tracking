@@ -47,7 +47,6 @@ if ($data = $form->get_data()) {
     $form->set_data(get_config('local_time_tracking'));
 }
 
-// Header
 echo $OUTPUT->header();
 $form->display();
 echo $OUTPUT->footer();

@@ -24,9 +24,9 @@
 
 use local_time_tracking\local\report\module_report;
 
+require_once(__DIR__ . '/../../config.php');
 global $CFG, $DB, $PAGE, $OUTPUT;
 
-require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $courseid = required_param('courseid', PARAM_INT);

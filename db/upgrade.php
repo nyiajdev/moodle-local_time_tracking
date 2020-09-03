@@ -87,5 +87,12 @@ function xmldb_local_time_tracking_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020082200, 'local', 'time_tracking');
     }
 
+    if ($oldversion < 2020090301) {
+        $table = new xmldb_table('time_tracking_session');
+        $dbman->rename_table($table, 'local_time_tracking_session');
+
+        upgrade_plugin_savepoint(true, 2020090301, 'local', 'time_tracking');
+    }
+
     return true;
 }

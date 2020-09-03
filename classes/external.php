@@ -35,23 +35,19 @@ require_once("$CFG->libdir/externallib.php");
 
 class external extends \external_api
 {
-    #region add_elapsed_time()
-
     /**
      * Returns description of track_module_time() parameters.
      *
      * @return external_function_parameters
      */
-    public static function add_elapsed_time_parameters()
-    {
+    public static function add_elapsed_time_parameters() {
         return new external_function_parameters([
             'sessionid' => new \external_value(PARAM_INT, 'User\'s page session ID.'),
             'elapsedtime' => new \external_value(PARAM_INT, 'Time in seconds to track for user.')
         ]);
     }
 
-    public static function add_elapsed_time($sessionid, $elapsedtime)
-    {
+    public static function add_elapsed_time($sessionid, $elapsedtime) {
         global $USER;
 
         $params = self::validate_parameters(self::add_elapsed_time_parameters(), [
@@ -85,6 +81,4 @@ class external extends \external_api
     public static function add_elapsed_time_returns() {
         return null;
     }
-
-    #endregion
 }

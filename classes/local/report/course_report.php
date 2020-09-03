@@ -70,15 +70,8 @@ class course_report extends table_sql {
         $headers[] = get_string('activitymodules', 'local_time_tracking');
         $columns[] = 'modulecount';
 
-        if (is_siteadmin() && !$this->is_downloading()) {
-//            $headers[] = get_string('actions');
-//            $columns[] = 'actions';
-        }
-
         $this->define_columns($columns);
         $this->define_headers($headers);
-
-        //$this->no_sorting('state');
 
         $this->set_attribute('courseid', $this->courseid);
 
@@ -100,7 +93,7 @@ class course_report extends table_sql {
      *                    current language.
      * @return string contents of cell in column 'fullname', for this row.
      */
-    function col_fullname($row) {
+    public function col_fullname($row) {
         global $DB;
 
         if (!$user = $DB->get_record('user', ['id' => $row->userid])) {
@@ -132,12 +125,14 @@ class course_report extends table_sql {
         if ($row->firstaccess > 0) {
             return local_time_tracking_format_date($row->firstaccess);
         }
+        return '';
     }
 
     public function col_lastaccess($row) {
         if ($row->lastaccess > 0) {
             return local_time_tracking_format_date($row->lastaccess);
         }
+        return '';
     }
 
     public function col_modulecount($row) {
@@ -161,8 +156,7 @@ class course_report extends table_sql {
      * @param bool $useinitialsbar
      * @throws \dml_exception
      */
-    function query_db($pagesize, $useinitialsbar = true)
-    {
+    public function query_db($pagesize, $useinitialsbar = true) {
         global $DB;
 
         list($wsql, $params) = $this->get_sql_where();
@@ -192,13 +186,13 @@ class course_report extends table_sql {
         }
 
         if ($pagesize != -1) {
-            $count_sql = 'SELECT COUNT(DISTINCT u.id) 
-                          FROM {user} u
-                          JOIN {user_enrolments} ue ON ue.userid = u.id
-                          JOIN {enrol} e ON e.id = ue.enrolid AND e.courseid = :courseid
-                          WHERE 1
-                          '.$wsql;
-            $total = $DB->count_records_sql($count_sql, $params);
+            $countsql = 'SELECT COUNT(DISTINCT u.id)
+                         FROM {user} u
+                         JOIN {user_enrolments} ue ON ue.userid = u.id
+                         JOIN {enrol} e ON e.id = ue.enrolid AND e.courseid = :courseid
+                         WHERE 1
+                         ' . $wsql;
+            $total = $DB->count_records_sql($countsql, $params);
             $this->pagesize($pagesize, $total);
         } else {
             $this->pageable(false);

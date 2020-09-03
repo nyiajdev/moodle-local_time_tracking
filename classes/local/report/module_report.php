@@ -25,6 +25,7 @@ namespace local_time_tracking\local\report;
 use cm_info;
 use coding_exception;
 use context_course;
+use dml_exception;
 use html_writer;
 use local_time_tracking\persistent\session;
 use table_sql;
@@ -87,15 +88,8 @@ class module_report extends table_sql {
         $headers[] = get_string('lastaccess');
         $columns[] = 'lastaccess';
 
-        if (is_siteadmin() && !$this->is_downloading()) {
-//            $headers[] = get_string('actions');
-//            $columns[] = 'actions';
-        }
-
         $this->define_columns($columns);
         $this->define_headers($headers);
-
-        //$this->no_sorting('state');
 
         $this->set_attribute('courseid', $this->courseid);
 
@@ -122,7 +116,7 @@ class module_report extends table_sql {
             return '<span class="text-muted"><i>' . get_string('notimetrackedyet', 'local_time_tracking') . '</i></span>';
         }
 
-        return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
+        return sprintf('%02d:%02d:%02d', ($t / 3600), ($t / 60 % 60), $t % 60);
     }
 
     public function col_firstaccess($row) {
@@ -146,10 +140,9 @@ class module_report extends table_sql {
     /**
      * @param int $pagesize
      * @param bool $useinitialsbar
-     * @throws \dml_exception
+     * @throws dml_exception
      */
-    function query_db($pagesize, $useinitialsbar = true)
-    {
+    public function query_db($pagesize, $useinitialsbar = true) {
         global $DB;
 
         list($wsql, $params) = $this->get_sql_where();
@@ -179,13 +172,13 @@ class module_report extends table_sql {
         }
 
         if ($pagesize != -1) {
-            $count_sql = 'SELECT COUNT(DISTINCT s.id) 
-                          FROM {' . session::TABLE . '} s
-                          JOIN {context} ctx ON ctx.id = s.contextid AND ctx.contextlevel = ' . CONTEXT_MODULE . '
-                          WHERE s.relatedcourseid = :courseid
-                          AND s.userid = :userid
-                          ' . $wsql;
-            $total = $DB->count_records_sql($count_sql, $params);
+            $countsql = 'SELECT COUNT(DISTINCT s.id)
+                         FROM {' . session::TABLE . '} s
+                         JOIN {context} ctx ON ctx.id = s.contextid AND ctx.contextlevel = ' . CONTEXT_MODULE . '
+                         WHERE s.relatedcourseid = :courseid
+                         AND s.userid = :userid
+                         ' . $wsql;
+            $total = $DB->count_records_sql($countsql, $params);
             $this->pagesize($pagesize, $total);
         } else {
             $this->pageable(false);
@@ -207,8 +200,7 @@ class module_report extends table_sql {
         if (!$this->columns) {
             $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}",
                 $this->sql->params, IGNORE_MULTIPLE);
-            //if columns is not set then define columns as the keys of the rows returned
-            //from the db.
+            // If columns is not set then define columns as the keys of the rows returned from the db.
             $this->define_columns(array_keys((array)$onerow));
             $this->define_headers(array_keys((array)$onerow));
         }
