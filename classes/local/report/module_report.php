@@ -280,9 +280,11 @@ class module_report extends table_sql {
 
             $groups[$data->cmid]['subrows'][] = $this->format_row($data);
         }
+        echo '</tbody>'; // Close tbody opened by start_output().
         echo $OUTPUT->render_from_template('local_time_tracking/module_report_table', [
             'groups' => array_values($groups)
         ]);
+        echo '<tbody>'; // Open tbody to be immediately closed by finish_output().
         $this->close_recordset();
         $this->finish_output();
     }
