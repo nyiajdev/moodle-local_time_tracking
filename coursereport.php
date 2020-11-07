@@ -47,13 +47,29 @@ $report->define_baseurl($PAGE->url);
 $report->is_downloadable(true);
 $report->show_download_buttons_at([TABLE_P_BOTTOM]);
 
-$pagesize = 25;
+$form = new \local_time_tracking\form\report_preferences_form($PAGE->url);
+
+$pagesize = get_user_preferences('local_time_tracking_pro_pagesize', 25);
+
+if ($data = $form->get_data()) {
+    $pagesize = $data->pagesize;
+    set_user_preference('local_time_tracking_pro_pagesize', $data->pagesize);
+} else {
+    $form->set_data(['pagesize' => $pagesize]);
+}
 
 // If downloading get all records.
 if ($report->is_downloading()) {
     $pagesize = -1;
 }
 
-echo $OUTPUT->header();
+// Output report content before header to allow download.
+ob_start();
 $report->out($pagesize, true);
+$tablehtml = ob_get_contents();
+ob_end_clean();
+
+echo $OUTPUT->header();
+echo $tablehtml;
+$form->display();
 echo $OUTPUT->footer();

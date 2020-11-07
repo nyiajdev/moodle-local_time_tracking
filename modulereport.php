@@ -57,13 +57,12 @@ $report->define_baseurl($PAGE->url);
 $report->is_downloadable(true);
 $report->show_download_buttons_at([TABLE_P_BOTTOM]);
 
-$pagesize = 25;
-
-// If downloading get all records.
-if ($report->is_downloading()) {
-    $pagesize = -1;
-}
+// Output report content before header to allow download.
+ob_start();
+$report->out(-1, true); // Output all rows to avoid grouped module records from being cut off.
+$tablehtml = ob_get_contents();
+ob_end_clean();
 
 echo $OUTPUT->header();
-$report->out($pagesize, true);
+echo $tablehtml;
 echo $OUTPUT->footer();

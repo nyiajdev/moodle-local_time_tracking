@@ -37,6 +37,7 @@ use table_sql;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot . '/local/time_tracking/lib.php');
 
 /**
  * Display module sessions within a course for a single user.
@@ -67,11 +68,13 @@ class module_report extends table_sql {
      *
      * @param int $userid
      * @param int $courseid
-     * @param bool $download
+     * @param string $download Data format type. One of csv, xhtml, ods, etc.
      * @throws moodle_exception
      */
-    public function __construct(int $userid, int $courseid, bool $download) {
+    public function __construct(int $userid, int $courseid, string $download) {
         parent::__construct($userid);
+
+        global $DB;
 
         $this->attributes['class'] = 'flexible table';
 
@@ -83,8 +86,10 @@ class module_report extends table_sql {
         $this->courseid = $courseid;
 
         if ($download) {
+            $user = $DB->get_record('user', ['id' => $userid]);
+
             raise_memory_limit(MEMORY_EXTRA);
-            $this->is_downloading($download, 'module-time-tracking-report-' . $userid);
+            $this->is_downloading($download, 'module-time-tracking-report-' . fullname($user));
         }
 
         // Define the headers and columns.
@@ -256,6 +261,11 @@ class module_report extends table_sql {
      */
     public function out($pagesize, $useinitialsbar, $downloadhelpbutton = '') {
         global $DB, $OUTPUT;
+
+        if ($this->is_downloading()) {
+            return parent::out($pagesize, $useinitialsbar, $downloadhelpbutton);
+        }
+
         if (!$this->columns) {
             $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}",
                 $this->sql->params, IGNORE_MULTIPLE);

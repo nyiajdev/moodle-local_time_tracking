@@ -35,6 +35,7 @@ use table_sql;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->dirroot . '/local/time_tracking/lib.php');
 
 /**
  * Display enrolled user sessions.
@@ -54,10 +55,10 @@ class course_report extends table_sql {
      * Build a new course report.
      *
      * @param int $courseid
-     * @param bool $download
+     * @param string $download Data format type. One of csv, xhtml, ods, etc.
      * @throws coding_exception
      */
-    public function __construct(int $courseid, bool $download) {
+    public function __construct(int $courseid, string $download) {
         parent::__construct($courseid);
 
         $this->courseid = $courseid;
@@ -133,8 +134,9 @@ class course_report extends table_sql {
      * @throws coding_exception
      */
     public function col_elapsedtime($row) {
-        if (!$row->elapsedtime && !$this->is_downloading()) {
-            return '<span class="text-muted"><i>' . get_string('notimetrackedyet', 'local_time_tracking') . '</i></span>';
+        if (!$row->elapsedtime) {
+            return $this->is_downloading() ? '' :
+                '<span class="text-muted"><i>' . get_string('notimetrackedyet', 'local_time_tracking') . '</i></span>';
         }
 
         return local_time_tracking_format_elapsed_time($row->elapsedtime);
@@ -179,19 +181,18 @@ class course_report extends table_sql {
      * @throws coding_exception
      */
     public function col_modulecount($row) {
-        $content = '';
-        if ($row->modulecount > 0) {
-            $content = get_string('activitymodulecount', 'local_time_tracking', ['count' => $row->modulecount]);
+        if (empty($row->modulecount) || $row->modulecount == -1) {
+            return '';
         }
 
         if (!$this->is_downloading()) {
-            $content = \html_writer::link(new \moodle_url('/local/time_tracking/modulereport.php', [
+            return \html_writer::link(new \moodle_url('/local/time_tracking/modulereport.php', [
                 'courseid' => $this->courseid,
                 'userid' => $row->userid
-            ]), $content);
+            ]), get_string('activitymodulecount', 'local_time_tracking', ['count' => $row->modulecount]));
+        } else {
+            return $row->modulecount;
         }
-
-        return $content;
     }
 
     /**
