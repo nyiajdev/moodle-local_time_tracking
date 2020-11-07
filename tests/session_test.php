@@ -80,9 +80,11 @@ class local_time_tracking_session_test extends advanced_testcase {
 
         $coursecontext = context_course::instance($this->course->id);
         $modulecontext = context_module::instance($forum->cmid);
+        $systemcontext = context_system::instance();
 
         $session1 = \local_time_tracking\persistent\session::create_from_context($coursecontext, $this->user->id);
         $session2 = \local_time_tracking\persistent\session::create_from_context($modulecontext, $this->user->id);
+        $session3 = \local_time_tracking\persistent\session::create_from_context($systemcontext, $this->user->id);
 
         $this->assertEquals($coursecontext->id, $session1->get('contextid'));
         $this->assertEquals($this->user->id, $session1->get('userid'));
@@ -93,5 +95,7 @@ class local_time_tracking_session_test extends advanced_testcase {
         $this->assertEquals($this->user->id, $session2->get('userid'));
         $this->assertEquals($this->course->id, $session2->get('relatedcourseid'));
         $this->assertEquals(0, $session2->get('elapsedtime'));
+
+        $this->assertEquals(1, $session3->get('relatedcourseid'));
     }
 }

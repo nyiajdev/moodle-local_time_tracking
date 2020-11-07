@@ -55,7 +55,7 @@ class settings_provider extends base_settings_provider {
      * @throws dml_exception
      */
     public function is_enabled(): bool {
-        return (bool)get_config('local_time_tracking', 'enabletracker');
+        return (bool)get_config('local_time_tracking', 'trackerenabled');
     }
 
     /**

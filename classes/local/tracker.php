@@ -74,7 +74,7 @@ class tracker {
     public function start_session() {
         global $PAGE;
 
-        $session = \local_time_tracking\persistent\session::create_from_context($this->context, $this->userid);
+        $session = session::create_from_context($this->context, $this->userid);
         $settings = self::get_settings_provider();
 
         $PAGE->requires->js_call_amd('local_time_tracking/init', 'initTracker', [
@@ -86,6 +86,8 @@ class tracker {
                 'sessiontimeoutwarnthreshold' => $settings->get_session_timeout_warn_threshold()
             ]
         ]);
+
+        return $session;
     }
 
     /**

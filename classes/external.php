@@ -81,11 +81,11 @@ class external extends external_api
 
         require_login();
 
-        $session = new session($sessionid);
-
-        if (!$session->get('id')) {
+        if (!session::record_exists($params['sessionid'])) {
             throw new moodle_exception('sessionnotfound', 'local_time_tracking');
         }
+
+        $session = new session($params['sessionid']);
 
         if ($session->get('userid') != $USER->id) {
             throw new moodle_exception('notmysession', 'local_time_tracking');
@@ -100,6 +100,7 @@ class external extends external_api
     /**
      * Returns description of track_module_time() result value.
      *
+     * @codeCoverageIgnore
      * @return external_description
      */
     public static function add_elapsed_time_returns() {

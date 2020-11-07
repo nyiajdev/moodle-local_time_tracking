@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test web services.
+ * Test time tracking "tracker".
  *
  * @package    local_time_tracking
  * @copyright  2020 NYIAJ LLC
@@ -23,23 +23,21 @@
  */
 
 use core\invalid_persistent_exception;
-use local_time_tracking\external;
-use local_time_tracking\persistent\session;
+use local_time_tracking\local\tracker;
+use local_time_tracking\local_time_tracking\settings_provider\settings_provider;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once("$CFG->dirroot/webservice/tests/helpers.php");
-
 /**
- * Test web services.
+ * Test time tracking "tracker".
  *
  * @group time_tracking
  * @copyright  2020 NYIAJ LLC
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_time_tracking_external_test extends externallib_advanced_testcase {
+class local_time_tracking_tracker_test extends advanced_testcase {
 
     /**
      * @var stdClass
@@ -71,47 +69,40 @@ class local_time_tracking_external_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Test adding elapsed time.
+     * Test starting tracker.
      *
-     * @throws invalid_persistent_exception
      * @throws coding_exception
-     * @throws invalid_parameter_exception
-     * @throws moodle_exception
-     * @throws require_login_exception
+     * @throws dml_exception
+     * @throws invalid_persistent_exception
      */
-    public function test_add_elapsed_time() {
+    public function test_tracker() {
         $this->resetAfterTest();
 
-        $this->setUser($this->user);
+        $tracker = new tracker(context_course::instance($this->course->id), $this->user->id);
+        $session = $tracker->start_session();
 
-        $session = session::create_from_context(context_course::instance($this->course->id), $this->user->id);
-
-        $this->assertEquals($session->get('elapsedtime'), 0);
-        external::add_elapsed_time($session->get('id'), 15);
-        $session->read();
-        $this->assertEquals(15, $session->get('elapsedtime'));
-        external::add_elapsed_time($session->get('id'), 15);
-        $session->read();
-        $this->assertEquals(30, $session->get('elapsedtime'));
-
-        $this->expectException(moodle_exception::class);
-        $this->expectExceptionMessage('Time tracking session not found');
-        external::add_elapsed_time(1234, 100);
+        $this->assertNotNull($session);
+        $this->assertEquals($this->user->id, $session->get('userid'));
+        $this->assertEquals($this->course->id, $session->get('relatedcourseid'));
+        $this->assertEquals(context_course::instance($this->course->id)->id, $session->get('contextid'));
     }
 
-    public function test_not_my_session() {
+    /**
+     * Test tracker settings.
+     *
+     * @throws dml_exception
+     */
+    public function test_settings_provider() {
         $this->resetAfterTest();
 
-        $this->setUser($this->user);
+        $this->assertInstanceOf(settings_provider::class, tracker::get_settings_provider());
 
-        $otheruser = $this->getDataGenerator()->create_user();
+        set_config('settingsprovider', settings_provider::class, 'local_time_tracking');
 
-        $session1 = session::create_from_context(context_course::instance($this->course->id), $this->user->id);
+        $this->assertInstanceOf(settings_provider::class, tracker::get_settings_provider());
 
-        $session2 = session::create_from_context(context_course::instance($this->course->id), $otheruser->id);
+        $this->assertNotEmpty(tracker::get_settings_providers());
 
-        $this->expectException(moodle_exception::class);
-        $this->expectExceptionMessage('Time tracking session is not yours');
-        external::add_elapsed_time($session2->get('id'), 123);
+        $this->assertTrue(tracker::get_settings_provider()->is_enabled());
     }
 }
