@@ -48,6 +48,9 @@ $PAGE->set_url(new moodle_url('/local/time_tracking/modulereport.php', [
 $PAGE->set_context($context);
 $PAGE->set_heading($title);
 $PAGE->set_title($title);
+$PAGE->navbar->add(get_string('coursereport', 'local_time_tracking', $course),
+    new moodle_url('/local/time_tracking/coursereport.php', ['courseid' => $course->id]));
+$PAGE->navbar->add(fullname($user));
 
 require_login($courseid);
 require_capability('local/time_tracking:viewreports', $context);

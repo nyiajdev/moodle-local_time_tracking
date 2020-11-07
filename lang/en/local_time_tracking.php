@@ -33,7 +33,7 @@ $string['idlethreshold_help'] = 'User is considered inactive after this many sec
 $string['interval'] = 'Record user activity every';
 $string['interval_help'] = 'Record user activity every X seconds by making an AJAX request. A lower value will track time more accurately, but will cause more load on the server. Leave this at the 10 second default unless you have a specific reason (such as having short pages, too much server load, etc).';
 $string['modulereport'] = '{$a->shortname}: {$a->userfullname} Time Tracking report';
-$string['notimetrackedyet'] = 'No time tracked yet';
+$string['notimetrackedyet'] = 'No time tracked';
 $string['notmysession'] = 'Time tracking session is not yours.';
 $string['pluginname'] = 'Time Tracking';
 $string['reportdateformat'] = 'Report date format';
@@ -51,6 +51,7 @@ $string['settingshelp'] = '<p class="alert alert-info"></p>';
 $string['settingsprovider'] = 'Settings provider';
 $string['settingsprovider_help'] = 'Choose where you will configure the Time Tracking settings.';
 $string['settingsproviderlabel'] = 'Settings provider';
+$string['time'] = 'Time';
 $string['time_tracking:trackactivity'] = 'Track this user\'s activity and time spent';
 $string['time_tracking:viewreports'] = 'View Time Tracking reports';
 $string['totaltime'] = 'Total time';

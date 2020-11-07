@@ -98,8 +98,8 @@ class module_report extends table_sql {
 
         $headers[] = get_string('activitymodule', 'local_time_tracking');
         $columns[] = 'activitymodule';
-        $headers[] = get_string('totaltime', 'local_time_tracking');
-        $columns[] = 'totalelapsedtime';
+        $headers[] = get_string('time', 'local_time_tracking');
+        $columns[] = 'elapsedtime';
         $headers[] = get_string('firstaccess');
         $columns[] = 'firstaccess';
         $headers[] = get_string('lastaccess');
@@ -139,7 +139,7 @@ class module_report extends table_sql {
      * @return string
      * @throws coding_exception
      */
-    public function col_totalelapsedtime($row) {
+    public function col_elapsedtime($row) {
         $t = $row->elapsedtime;
 
         if (!$t && !$this->is_downloading()) {
@@ -283,7 +283,7 @@ class module_report extends table_sql {
                 $groups[$data->cmid] = $this->format_row($data);
                 $groups[$data->cmid]['subrows'] = [];
                 $groups[$data->cmid]['uniqueid'] = uniqid();
-                $groups[$data->cmid]['elapsedtime'] = local_time_tracking_format_elapsed_time($data->elapsedtime);
+                $groups[$data->cmid]['totalelapsedtime'] = local_time_tracking_format_elapsed_time($data->totalelapsedtime);
                 $groups[$data->cmid]['timecreated'] = local_time_tracking_format_date($data->timecreated);
                 $groups[$data->cmid]['timemodified'] = local_time_tracking_format_date($data->timemodified);
             }
