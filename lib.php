@@ -54,14 +54,20 @@ function local_time_tracking_extend_navigation(global_navigation $nav) {
  *
  * @param navigation_node $navigation The navigation node to extend
  * @param stdClass $course The course to object for the report
- * @param stdClass $context The context of the course
+ * @param context $context The context of the course
  * @throws moodle_exception
  */
 function local_time_tracking_extend_navigation_course($navigation, $course, $context) {
-    if ($node = $navigation->get('coursereports')) {
+    if (has_capability('local/time_tracking:viewreports', $context)) {
         $url = new moodle_url('/local/time_tracking/coursereport.php', ['courseid' => $course->id]);
-        $node->add(get_string('pluginname', 'local_time_tracking'), $url, navigation_node::TYPE_SETTING, null, null,
-            new pix_icon('i/report', ''));
+
+        if ($node = $navigation->get('coursereports')) {
+            $node->add(get_string('pluginname', 'local_time_tracking'), $url, navigation_node::TYPE_SETTING, null, null,
+                new pix_icon('i/report', ''));
+        }
+
+        $navigation->add(get_string('pluginname', 'local_time_tracking'), $url, navigation_node::TYPE_SETTING, null, null,
+            new pix_icon('i/hourglass', '', 'local_time_tracking'));
     }
 }
 
@@ -92,4 +98,15 @@ function local_time_tracking_format_date(int $timestamp) {
  */
 function local_time_tracking_format_elapsed_time(int $seconds): string {
     return sprintf('%02d:%02d:%02d', ($seconds / 3600), ($seconds / 60 % 60), $seconds % 60);
+}
+
+/**
+ * Get icon mapping for font-awesome.
+ *
+ * @return  array
+ */
+function local_time_tracking_get_fontawesome_icon_map() {
+    return [
+        'local_time_tracking:i/hourglass' => 'fa-hourglass'
+    ];
 }
