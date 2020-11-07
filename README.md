@@ -1,3 +1,5 @@
+![Time tracking icon](https://raw.githubusercontent.com/nyiajdev/moodle-local_time_tracking/master/pix/time_tracking.png)
+
 FEATURES
 
 * Track user activity on all pages
