@@ -33,7 +33,9 @@ require_once("$CFG->libdir/formslib.php");
 /**
  * Report preferences.
  *
- * @package local_time_tracking
+ * @package    local_time_tracking
+ * @copyright  2020 NYIAJ LLC
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class report_preferences_form extends \moodleform {
 

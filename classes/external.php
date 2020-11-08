@@ -100,7 +100,6 @@ class external extends external_api
     /**
      * Returns description of track_module_time() result value.
      *
-     * @codeCoverageIgnore
      * @return external_description
      */
     public static function add_elapsed_time_returns() {
