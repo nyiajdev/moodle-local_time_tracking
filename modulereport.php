@@ -23,6 +23,7 @@
  */
 
 use local_time_tracking\local\report\module_report;
+use local_time_tracking\local\tracker;
 
 require_once(__DIR__ . '/../../config.php');
 global $CFG, $DB, $PAGE, $OUTPUT;
@@ -67,5 +68,13 @@ $tablehtml = ob_get_contents();
 ob_end_clean();
 
 echo $OUTPUT->header();
+
+echo html_writer::div(get_string('summarycoursetime', 'local_time_tracking',
+    ['time' => local_time_tracking_format_elapsed_time(tracker::get_course_context_time($courseid, $userid))]));
+echo html_writer::div(get_string('summarymoduletime', 'local_time_tracking',
+    ['time' => local_time_tracking_format_elapsed_time(tracker::get_modules_time($courseid, $userid))]));
+echo html_writer::div(get_string('summarytotaltime', 'local_time_tracking',
+    ['time' => local_time_tracking_format_elapsed_time(tracker::get_total_time($courseid, $userid))]));
+
 echo $tablehtml;
 echo $OUTPUT->footer();

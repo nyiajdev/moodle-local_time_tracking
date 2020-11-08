@@ -108,6 +108,11 @@ class module_report extends table_sql {
         $this->define_columns($columns);
         $this->define_headers($headers);
 
+        $this->no_sorting('activitymodule');
+        $this->no_sorting('elapsedtime');
+        $this->no_sorting('firstaccess');
+        $this->no_sorting('lastaccess');
+
         $this->set_attribute('courseid', $this->courseid);
 
         // Set help icons.
@@ -227,7 +232,7 @@ class module_report extends table_sql {
 
         $sort = $this->get_sql_sort();
         if ($sort) {
-            $sql = $sql . ' ORDER BY ' . $sort;
+            $sql = $sql . ' ORDER BY s.' . $sort;
         }
 
         if ($pagesize != -1) {

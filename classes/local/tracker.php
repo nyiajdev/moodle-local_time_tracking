@@ -121,4 +121,54 @@ class tracker {
 
         return $providers;
     }
+
+    /**
+     * Get total time user spent in a course.
+     *
+     * @param int $courseid
+     * @param int $userid
+     * @return int
+     * @throws dml_exception
+     */
+    public static function get_total_time(int $courseid, int $userid): int {
+        global $DB;
+
+        return $DB->get_field_sql('SELECT SUM(s.elapsedtime) 
+                                       FROM {local_time_tracking_session} s 
+                                       WHERE s.relatedcourseid = ? AND s.userid = ?', [$courseid, $userid]);
+    }
+
+    /**
+     * Get time spent in modules context only for a course.
+     *
+     * @param int $courseid
+     * @param int $userid
+     * @return int
+     * @throws dml_exception
+     */
+    public static function get_modules_time(int $courseid, int $userid): int {
+        global $DB;
+
+        return $DB->get_field_sql('SELECT SUM(s.elapsedtime) 
+                                       FROM {local_time_tracking_session} s 
+                                       WHERE s.relatedcourseid = ? AND s.contextid != ? AND s.userid = ?',
+            [$courseid, \context_course::instance($courseid)->id, $userid]);
+    }
+
+    /**
+     * Get time spent in course context (not activities).
+     *
+     * @param int $courseid
+     * @param int $userid
+     * @return int
+     * @throws dml_exception
+     */
+    public static function get_course_context_time(int $courseid, int $userid): int {
+        global $DB;
+
+        return $DB->get_field_sql('SELECT SUM(s.elapsedtime) 
+                                       FROM {local_time_tracking_session} s 
+                                       WHERE s.contextid = ? AND s.userid = ?',
+            [\context_course::instance($courseid)->id, $userid]);
+    }
 }
