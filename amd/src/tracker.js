@@ -16,10 +16,11 @@
 define(['jquery', 'local_time_tracking/timer', 'local_time_tracking/inactivity_timer', 'core/ajax', 'core/log'],
     function($, Timer, InactivityTimer, Ajax, Log) {
 
-    let Tracker = function(sessionId) {
+    let Tracker = function(sessionId, settings) {
         this.timer = null;
         this.inactivityTimer = null;
         this.sessionId = sessionId;
+        this.settings = settings;
     };
 
     /**
@@ -41,7 +42,9 @@ define(['jquery', 'local_time_tracking/timer', 'local_time_tracking/inactivity_t
 
         Log.debug('TIME_TRACKER: Init');
 
-        const interval = 3;
+        const interval = this.settings.interval;
+
+        console.log("SETTINGS", this.settings);
 
         this.timer = new Timer(1000);
         this.timer.start();
@@ -49,15 +52,16 @@ define(['jquery', 'local_time_tracking/timer', 'local_time_tracking/inactivity_t
         $(this.timer).on('timer.tick', () => {
             const ticks = this.timer.getTicks();
 
-            Log.debug('TRACKER: Tick');
-
             if (ticks % interval === 0) {
                 Log.debug('TRACKER: Add elapsed time ' + interval);
                 this.addElapsedTime(interval);
             }
         });
 
-        this.inactivityTimer = new InactivityTimer(5000, 15, 5);
+        this.inactivityTimer = new InactivityTimer(
+            this.settings.idlethreshold * 1000,
+            this.settings.sessiontimeout,
+            this.settings.sessiontimeoutwarnthreshold);
         this.inactivityTimer.init();
 
         // When user goes inactive, stop tracking time.

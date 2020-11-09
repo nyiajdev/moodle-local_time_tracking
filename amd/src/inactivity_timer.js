@@ -31,21 +31,20 @@ define(['jquery', 'core/config', 'core/modal_factory', 'core/log'], function($, 
         this.timeoutModal = null;
         this.videos = {};
         this.loggedOut = false;
+
+        console.log("NEW IT", this);
     };
 
     InactivityTimer.prototype.init = function() {
         $(document).mousemove(() => {
-            Log.debug("Mouse move");
             this.activate();
         });
 
         $(document).keypress(() => {
-            Log.debug("Key press");
             this.activate();
         });
 
         $(document).scroll(() => {
-            Log.debug("Scroll");
             this.activate();
         });
 
@@ -60,7 +59,6 @@ define(['jquery', 'core/config', 'core/modal_factory', 'core/log'], function($, 
             }
 
             let secondsUntilTimeout = this.sessionTimeout - (this.idleTime / 1000);
-            Log.debug("INACTIVITY_TIMER: Until timeout " + secondsUntilTimeout);
 
             if (this.sessionTimeout > 0 && secondsUntilTimeout <= 0) {
                 $(this).trigger('session_timeout');
@@ -132,15 +130,9 @@ define(['jquery', 'core/config', 'core/modal_factory', 'core/log'], function($, 
     InactivityTimer.prototype.activate = function() {
         this.idleTime = 0;
         if (!this.active) {
-            if (this.debug) {
-                Log.debug('INACTIVITY_TIMER', 'active');
-            }
             $(this).trigger('active');
         }
         if (this.timeoutModal && this.timeoutModal.isVisible()) {
-            if (this.debug) {
-                Log.debug('INACTIVITY_TIMER', "HIDE");
-            }
             this.hideTimeoutWarnModal();
         }
         this.active = true;

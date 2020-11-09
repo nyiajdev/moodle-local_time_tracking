@@ -16,8 +16,8 @@
 
 define(['local_time_tracking/tracker', 'core/log'], function(Tracker, Log) {
     return {
-        initTracker: function(sessionId) {
-            const tracker = new Tracker(sessionId);
+        initTracker: function(sessionId, settings) {
+            const tracker = new Tracker(sessionId, settings);
             Log.debug('TRACKER: Tracker is enabled and recording user time spent on this page.');
             Log.debug('TRACKER: Starting tracker for session ' + sessionId);
             tracker.start();
