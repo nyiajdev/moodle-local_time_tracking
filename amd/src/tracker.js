@@ -58,26 +58,28 @@ define(['jquery', 'local_time_tracking/timer', 'local_time_tracking/inactivity_t
             }
         });
 
-        this.inactivityTimer = new InactivityTimer(
-            this.settings.idlethreshold * 1000,
-            this.settings.sessiontimeout,
-            this.settings.sessiontimeoutwarnthreshold);
-        this.inactivityTimer.init();
+        if (this.settings.idlethreshold > 0) {
+            this.inactivityTimer = new InactivityTimer(
+                this.settings.idlethreshold * 1000,
+                this.settings.sessiontimeout,
+                this.settings.sessiontimeoutwarnthreshold);
+            this.inactivityTimer.init();
 
-        // When user goes inactive, stop tracking time.
-        $(this.inactivityTimer).on('inactive', () => {
-            this.timer.pause();
-        });
+            // When user goes inactive, stop tracking time.
+            $(this.inactivityTimer).on('inactive', () => {
+                this.timer.pause();
+            });
 
-        // When a user becomes active, continue tracking time.
-        $(this.inactivityTimer).on('active', () => {
-            this.timer.start();
-        });
+            // When a user becomes active, continue tracking time.
+            $(this.inactivityTimer).on('active', () => {
+                this.timer.start();
+            });
 
-        // If user is inactive for too long log them out.
-        $(this.inactivityTimer).on('session_timeout', () => {
-            this.inactivityTimer.logout();
-        });
+            // If user is inactive for too long log them out.
+            $(this.inactivityTimer).on('session_timeout', () => {
+                this.inactivityTimer.logout();
+            });
+        }
     };
 
     return Tracker;
